@@ -77,9 +77,38 @@ class FitnessFunction:
 	def trap(self,generation):
 
 		newGeneration=[]
+
+		# This variable controls whther we have encountered negative value
+		# or not.
+		encNegVal=0
+
+		# This variable holds the minimum negative value.
+		minNegVal=0
+
 		for member in generation:
-			newGeneration.append((member,3*len(member)*prod(member)-sum(member)))
+			fitnessVal=3*len(member)*prod(member)-sum(member)
+			if fitnessVal < 0:
+				encNegVal=1
+				if fitnessVal < minNegVal:
+					minNegVal=fitnessVal
+			newGeneration.append((member,fitnessVal))
 		
+
+		# since it is possible that the fitness value can be negative in 
+		# this fitness function, what we will do is that, we find the minimum
+		# one and add its opposit to all other elements.
+		if encNegVal:
+
+			fixedGeneration=[]
+			for member in newGeneration:
+
+				fixedGeneration.append((member[0],member[1]+(-minNegVal)))
+
+
+			newGeneration=fixedGeneration
+
+
+
 
 		return newGeneration
 

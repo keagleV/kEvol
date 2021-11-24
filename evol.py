@@ -34,6 +34,11 @@ from recombination import RecombinationFunction
 
 from bitflapping import BitFlappingFunction
 
+from report import EvolAlgoConfigReport
+
+from report import EvolAlgoExecReport
+
+
 
 class EvolSearch:
 
@@ -70,6 +75,10 @@ class EvolSearch:
 		self.listOfConfigurations=list()
 
 
+		# Holds the reports of each config
+		self.configReports=list()
+
+
 		# error codes dictionary
 		self.errorCodes={
 		'NO_CONFIG_FOUND': "No Config File Found",
@@ -84,7 +93,10 @@ class EvolSearch:
 
 		'RUNNING_PREDEFINED':'Running Pre-Defined Configuration',
 		'CONFIG_OBJECTS_CREATED': 'Configuration Objects Have Been Created For The Algorithm',
-		'EVOL_ALGO_STARTED':'Evolutionary Algorithm Has Been Started...\n'
+		'EVOL_ALGO_STARTED':'Evolutionary Algorithm Has Been Started...\n',
+		'REPORT_FILE_EXISTS':'File report.csv Does Exist, Overwrite It? ',
+		'NO_REPORT_CREATED': 'No Report File Created Or Corrupted',
+		'REPORT_CREATED': 'Report Was Written To report.csv'
 
 				}
 
@@ -208,13 +220,111 @@ class EvolSearch:
 
 
 
-	def create_report(self,generation):
-		pass
+	def create_report(self):
+
+		'''
+			This function creates report for all the configurations
+		'''
+		
+
+		# Writing to a csv file
+
+		if path.exists("report.csv"):
+
+			self.evol_search_log(1,self.errorCodes['REPORT_FILE_EXISTS'])
+
+			userAnswer=str()
+
+			while True:
+				userAnswer=input("Overwrite?[y/n] ")
+				if userAnswer.lower() in 'no n':
+
+					self.evol_search_log(1,self.errorCodes['NO_REPORT_CREATED'])
+
+					exit(0)
+
+				elif userAnswer.lower() in 'y ye yes':
+					break
+
+
+
+		# Columns of the csv file
+		reportColumns=['CFG','CFG_MEAN','CFG_SD','CFG_BEI','CFG_BEF']
+
+		#TODO
+		for i in range(10):
+			reportColumns.append("E"+str(i+1)+" BF")
+			reportColumns.append("E"+str(i+1)+" ST")
+			reportColumns.append("E"+str(i+1)+" FFC")
+
+
+		# Adding config parameters' columns
+		reportColumns=reportColumns+["problemSize","popSize","combProb","mutProb",
+						"selectAlgo",
+						"recombineAlgo",
+						"bitFlappingAlgo",
+						"fitnessFunction",
+						"maxGenEvol"]
+
+
+
+		fhandle=open("report.csv",'w')
+
+		
+		# Writing the columns
+		fhandle.write(','.join(reportColumns)+"\n")
+
+		# Writing Values
+
+		for configR in self.configReports:
+			valueToBeWritten=[]
+			valueToBeWritten.append(str(configR.configIndex+1)) # +1 is because indexes are 0-based
+			valueToBeWritten.append(str(configR.meanValue))
+
+			valueToBeWritten.append(str(configR.standDev))
+
+
+			valueToBeWritten.append(str(configR.bestExecutionIndex))
+			valueToBeWritten.append(str(configR.bestExecutionFitness))
+
+
+			# Adding values of the executions
+			for execReport in configR.get_exec_reports():
+
+				valueToBeWritten.append(str(execReport.get_exec_bfitness()))
+
+				valueToBeWritten.append(execReport.get_exec_state())
+				valueToBeWritten.append(str(execReport.get_fitness_func_call_count()))
+
+
+			# Adding values of the configuration parameters
+			valueToBeWritten.append(str(configR.get_report_config().problemSize))
+			valueToBeWritten.append(str(configR.get_report_config().popSize))
+			valueToBeWritten.append(str(configR.get_report_config().combProb))
+			valueToBeWritten.append(str(configR.get_report_config().mutProb))
+			valueToBeWritten.append(configR.get_report_config().selectAlgo)
+			valueToBeWritten.append(configR.get_report_config().recombineAlgo)
+
+			valueToBeWritten.append(configR.get_report_config().bitFlappingAlgo)
+			valueToBeWritten.append(configR.get_report_config().fitnessFunc)
+			valueToBeWritten.append(str(configR.get_report_config().maxGenEvol))
+
+			# print(len(valueToBeWritten))
+			# Writing values 
+			fhandle.write(','.join(valueToBeWritten)+"\n")
+
+
+		self.evol_search_log(1,self.errorCodes['REPORT_CREATED'])
+
+		
+		fhandle.close()
+
+		
 
 
 
 
-	def should_b_terminated(self,maxGenEvol,generation,config):
+	def should_b_terminated(self,maxGenEvol,generation,config,execIndex,fitnessFunctionCallCount):
 
 
 		'''
@@ -223,11 +333,36 @@ class EvolSearch:
 
 		'''
 
+		
+
+
+
 		# Check the maxEvolCnt in the config object. 
 
 		if config.maxGenEvol==maxGenEvol:
-			self.evol_search_log(1,self.errorCodes["EVOLUTION_MAX_LEVEL_REACHED"])
-			return 1
+			# self.evol_search_log(1,self.errorCodes["EVOLUTION_MAX_LEVEL_REACHED"])
+
+			# Creating a report object for this execution
+			execReport=EvolAlgoExecReport()
+			execReport.set_exec_index(execIndex)
+
+
+			# Calculate the best fitness of the current generation for reporting 
+			# purposes.
+			bestFitness= ( max(generation, key=lambda tup: tup[1]) )[1] # We want second value
+
+
+			# Setting the exectition best fitness value
+			execReport.set_best_fitness(bestFitness)
+
+
+			# Setting the fitness function call count
+			execReport.set_fitness_func_call_count(fitnessFunctionCallCount)
+
+			# TODO  for the message use diction?
+			execReport.set_exec_state("MAX_EVOL_LEVEL_REACHED")
+
+			return execReport
 
 
 		# check for the best solution which is a string of all 1s like:  11.....111.
@@ -236,61 +371,135 @@ class EvolSearch:
 		# Remind that member in this loop, is a tuple of (member,fitnessValue)
 		for member in generation:
 			if member[0]==[1]*(config.problemSize):
-				self.evol_search_log(1,self.errorCodes["BEST_SOLUTION_FOUND"])
+				# self.evol_search_log(1,self.errorCodes["BEST_SOLUTION_FOUND"])
 
-				self.evol_search_log(1,self.errorCodes["PREPARING_REPORT"])
+				# self.evol_search_log(1,self.errorCodes["PREPARING_REPORT"])
 
-				return 1
+				# Creating a report object for this execution
+				execReport=EvolAlgoExecReport()
+				execReport.set_exec_index(execIndex)
 
 
-		return 0
+				# Calculate the best fitness of the current generation for reporting 
+				# purposes.
+				bestFitness= ( max(generation, key=lambda tup: tup[1]) )[1] # We want second value
+
+
+				# Setting the exectition best fitness value
+				execReport.set_best_fitness(bestFitness)
+
+
+				# Setting the fitness function call count
+				execReport.set_fitness_func_call_count(fitnessFunctionCallCount)
+
+
+				execReport.set_exec_state("BEST_SOLUTION_FOUND")
+
+
+
+				return execReport
+
+
+		return None
 
 
 
 	def start_evol(self):
 		'''
-			This function starts the evolution process
+			This function starts the evolution process for all the configurations.
 		
 		'''
-		
 		self.evol_search_log(1,self.errorCodes["EVOL_ALGO_STARTED"])
 
 
+		# For each config we are going to execute the evolution algorithm
+		# for a specific number of rounds.
+		for idx,config in enumerate(self.listOfConfigurations):
 
 
-		for config in self.listOfConfigurations:
+			# Create report object for the config
+			configReport=EvolAlgoConfigReport(config)
 
+
+
+			# Setting the index of the configuration
+			configReport.set_config_index(idx)
+
+
+
+
+			# TODO  change the value of 10
+			for i in range(10):
+
+				execReport = self.run_evol(config,i)
+
+				# Increment the number of execution
+				configReport.execution_increment()
+
+				# Adding the execution report
+				configReport.add_execution_report(execReport)
+
+
+			# After finishing the 10 rounds of execution, calculate the 
+			# mean and standard deviation value for the configuration
+			configReport.calculate_mean()
+			configReport.calculate_sd()
+
+			# Adding the configuration to the list of all config reports.
+			self.configReports.append(configReport)
+
+
+
+
+
+
+
+
+
+	def run_evol(self,config,execIndex):
+		
+		'''
+			This function runs the evolution algorithm on a specific configuration.
+		'''
 
 
 
 			
-			#TODO 
-			# check the config file first.
-			self.parse_evol_config(config)
+		#TODO 
+		# check the config file first.
+		self.parse_evol_config(config)
 
 
 
-		
-			# generate the initial population for the first generation
-			initPopulation = self.generate_init_pop(config)
+	
+		# generate the initial population for the first generation
+		initPopulation = self.generate_init_pop(config)
 
 
-			# evaluate the the initial population
-			currGeneration=self.evaluate_generation(initPopulation)
-
-
-
-
-			# defines the number of loop execution
-			maxGenEvol=0
-
-		
-
-			while not self.should_b_terminated(maxGenEvol,currGeneration,config):
+		# evaluate the the initial population
+		currGeneration=self.evaluate_generation(initPopulation)
 
 
 
-				
+
+		# defines the number of loop execution
+		maxGenEvol=0
+
+		# defines the fitness function call count
+		fitnessFunctionCallCount=0
+
+	
+
+		while True:
+
+			decision=self.should_b_terminated(maxGenEvol,currGeneration,config,execIndex,fitnessFunctionCallCount)
+
+			# If the report was returned, stop and return the report.
+			if decision :
+
+				return decision
+
+			else:
 
 				# Selecting parents from the current generation
 				parentsPool=self.selectionFunction(currGeneration)
@@ -332,11 +541,17 @@ class EvolSearch:
 				currGeneration=[*parentsNotMated,*evaluatedOffspring]
 					
 
-				# decrement the maxGenEvol 
+				# Incrementing the maxGenEvol 
 				maxGenEvol+=1
 
+				# Incrementing the fitnessFunctionCallCount
+				fitnessFunctionCallCount+=1
 
-			# print(currGeneration)	
+
+
+
+
+
 
 
 
@@ -435,3 +650,4 @@ evolObj.evol_algo_argument_reader()
 
 evolObj.start_evol()
 
+evolObj.create_report()
