@@ -13,7 +13,7 @@ class EvolSearchConfig:
 						selectAlgo="fitprop",
 						recombineAlgo="spc",
 						bitFlappingAlgo='bfp',
-						fitnessFunction="f",
+						fitnessFunction="trap",
 						maxGenEvol=300):
 
 		# defines the solutions length

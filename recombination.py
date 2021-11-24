@@ -105,7 +105,83 @@ class RecombinationFunction:
 
 
 
-	def uniform_crossover(self,generation):
+	def uniform_crossover(self,parentPairs,solutionSize,recombProb):
+		'''
+			This function implements the uniform crossover recombination function.
+		'''
 
 
-		pass
+		newGeneration=[]
+
+
+		# This list contains those parents that did not
+		parentsNotMated=[]
+
+		for pair in parentPairs:
+
+
+			# For each pair, based on the recombintion probabilty, we decide
+			# whether to recombine or not.
+
+
+			# I have used round(), since it would make the randomness much possible.
+			if round(random(),1) == recombProb:
+
+
+				# Excluding  parent members from the pairs which each pair is with 
+				# form of (member,fitness)
+				parent1=pair[0][0]
+				parent2=pair[1][0]
+
+				child1=[]
+				child2=[]
+
+				for i in range(len(parent1)):
+
+					# If the random number is 1 then we assign the gene to
+					# the first child,otherwise, we assign it to the second child.
+					if randint(1,2)==1:
+						child1.append(parent1[i])
+
+						# Adding the corresponding gene in parent2 to the child2
+						child2.append(parent2[i])
+
+					else:
+
+						child2.append(parent1[i])
+
+						# Adding the corresponding gene in parent2 to the child1
+						child1.append(parent2[i])
+
+
+
+				# Adding the new childs to the the newGeneration
+				newGeneration.append(child1)
+				newGeneration.append(child2)
+
+
+
+
+			else:
+				# In this case we would not recombine the parent pairs and so we
+				# add them without chaning to the newGeneration.
+
+
+				#TODO
+				# Important Node: Adding the parents would be done as a tuple of
+				# (member,fitness) since it makes the evaluation of the new generation
+				# much more efficient because there if no necc ??????????????
+
+
+				parentsNotMated.append(pair[0])
+				parentsNotMated.append(pair[1])
+
+
+
+				
+
+
+
+		# returning newGeneration which is our new generation of childs
+		return parentsNotMated,newGeneration
+

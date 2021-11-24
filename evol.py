@@ -70,7 +70,8 @@ class EvolSearch:
 		'NO_RECOMBINATION_FUNCTION_FOUND': "Recombination Function Not Defined Yet",
 		'NO_BIT_FLAPPING_FUNCTION_FOUND':"Bit Flapping Function Not Defined Yet",
 		'EVOLUTION_MAX_LEVEL_REACHED': "Evoltion Maximum Level Reached",
-		'BEST_SOLUTION_FOUND':"Best Solution Has Been Found"
+		'BEST_SOLUTION_FOUND':"Best Solution Has Been Found",
+		'PREPARING_REPORT': "The Algorithm Report Is Being Prepared"
 		}
 
 
@@ -193,6 +194,13 @@ class EvolSearch:
 
 
 
+
+	def create_report(self,generation):
+		pass
+
+
+
+
 	def shouldBTerminated(self,maxGenEvol,generation):
 
 
@@ -205,7 +213,7 @@ class EvolSearch:
 		# Check the maxEvolCnt in the config object. 
 
 		if self.evolConfig.maxGenEvol==maxGenEvol:
-			self.evol_search_log(1,"EVOLUTION_MAX_LEVEL_REACHED")
+			self.evol_search_log(1,self.errorCodes["EVOLUTION_MAX_LEVEL_REACHED"])
 			return 1
 
 
@@ -215,7 +223,10 @@ class EvolSearch:
 		# Remind that member in this loop, is a tuple of (member,fitnessValue)
 		for member in generation:
 			if member[0]==[1]*(self.evolConfig.problemSize):
-				self.evol_search_log(1,"BEST_SOLUTION_FOUND")
+				self.evol_search_log(1,self.errorCodes["BEST_SOLUTION_FOUND"])
+
+				self.evol_search_log(1,self.errorCodes["PREPARING_REPORT"])
+
 				return 1
 
 
@@ -294,15 +305,11 @@ class EvolSearch:
 			currGeneration=[*parentsNotMated,*evaluatedOffspring]
 				
 
-
-
-			
-
 			# decrement the maxGenEvol 
 			maxGenEvol+=1
 
 
-
+		# print(currGeneration)	
 
 
 
@@ -314,7 +321,10 @@ class EvolSearch:
 
 
 
-evolConfig=EvolSearchConfig(popSize=4,problemSize=4,fitnessFunction="onemax",bitFlappingAlgo="bfp")
+# evolConfig=EvolSearchConfig(popSize=10,selectAlgo='fitprop',problemSize=4,recombineAlgo='uc',fitnessFunction="trap",bitFlappingAlgo="bfp")
+
+evolConfig=EvolSearchConfig(popSize=100,problemSize=20)
+
 
 
 evolObj=EvolSearch(evolConfig)

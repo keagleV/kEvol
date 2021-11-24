@@ -1,5 +1,9 @@
 from random import choices
 
+from random import randint
+
+
+
 class SelectionFunction:
 
 	'''
@@ -7,7 +11,6 @@ class SelectionFunction:
 		used for the evolutionary algorithm.
 
 	'''
-
 	def __init__ (self,selectionFunctionName="fitprop"):
 
 		self.functionName=selectionFunctionName;
@@ -59,6 +62,30 @@ class SelectionFunction:
 
 
 	def bin_tournament(self,generation):
+		'''
+			This function implements the binary tournament selection function.
+
+		'''
+
+		# New Generation to be returned
+		newGeneration=[]
 
 
-		pass
+		# First define the size of the next generation.
+		# The size of the next generation is the size of the current generation.
+
+		nextGenerationSize=len(generation);
+
+		for i in range(nextGenerationSize):
+
+			# Choosing a random number which indicates the index of the memeber of
+			# the generation to be selected.
+			randNum=randint(0,nextGenerationSize-1)
+
+			newGeneration.append(generation[randNum])
+
+
+
+		return newGeneration
+
+		

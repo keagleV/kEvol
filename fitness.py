@@ -55,7 +55,7 @@ class FitnessFunction:
 				newGeneration.append((member,sum(member)))
 			else:
 				newGeneration.append(member)  # tuples are added without any calculation
-
+				
 
 	
 	
