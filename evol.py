@@ -427,16 +427,6 @@ class EvolSearch:
 
 
 
-
-
-
-# evolConfig=EvolSearchConfig(popSize=10,selectAlgo='fitprop',problemSize=4,recombineAlgo='uc',fitnessFunction="trap",bitFlappingAlgo="bfp")
-
-# evolConfig=EvolSearchConfig(popSize=100,problemSize=20)
-
-
-
-
 evolObj=EvolSearch()
 
 
@@ -445,8 +435,3 @@ evolObj.evol_algo_argument_reader()
 
 evolObj.start_evol()
 
-# tup = (("11", 4),)
-# print(tup)
-
-# dct = dict((y, x) for x, y in tup)
-# print(dct)

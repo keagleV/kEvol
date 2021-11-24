@@ -405,39 +405,10 @@ class CrCfg:
 		self.write_new_configurations()
 
 
-# crcfObj=CrCfg()
+crcfObj=CrCfg()
 
-# crcfObj.argument_reader()
+crcfObj.argument_reader()
 
-# crcfObj.parse_val_file()
+crcfObj.parse_val_file()
 
-
-# a=lambda y: int(y) if y.isnumeric() else y
-
-# print(a('14')+2)
-
-
-for i in range(10.0):
-	print(i)
-
-# a='\s*\[\s*([1-9]*[02468])(\s*,\s*([1-9]*[02468]))*\s*\]\s*'
-# str='popSize=[12 , 14 , 18]'
-# res=re.search(a,str).group(0)
-
-# print( res.group(0))
-
-
-
-# a="[1, 2, a   ,4]"
-
-# a=re.sub(r'([a-zA-Z]+)',r'"\1"',a)
-
-# print(eval(a))
-
-
-# a=[1,2,3]
-# b=[4,'q']
-# c=['zz','rr']
-
-# print(len(list(product(a,b,c))))
 
