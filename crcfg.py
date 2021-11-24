@@ -389,15 +389,15 @@ class CrCfg:
 			self.bitFlapAlgos.append('-')
 
 
-		self.allCombinations=list(product(self.populationSizes,
-		self.problemSizes,
+		self.allCombinations=list(product(self.problemSizes,
+		self.populationSizes,
 		self.recombProbs,
 		self.mutProbs,
 		self.selAlgos,
 		self.recombAlgos,
-		self.maxGenEvols,
-		self.fitnessFuncs,
 		self.bitFlapAlgos,
+		self.fitnessFuncs,
+		self.maxGenEvols,
 			))
 
 
@@ -405,13 +405,20 @@ class CrCfg:
 		self.write_new_configurations()
 
 
-crcfObj=CrCfg()
+# crcfObj=CrCfg()
 
-crcfObj.argument_reader()
+# crcfObj.argument_reader()
 
-crcfObj.parse_val_file()
+# crcfObj.parse_val_file()
 
 
+# a=lambda y: int(y) if y.isnumeric() else y
+
+# print(a('14')+2)
+
+
+for i in range(10.0):
+	print(i)
 
 # a='\s*\[\s*([1-9]*[02468])(\s*,\s*([1-9]*[02468]))*\s*\]\s*'
 # str='popSize=[12 , 14 , 18]'

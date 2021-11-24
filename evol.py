@@ -82,7 +82,10 @@ class EvolSearch:
 		'PREPARING_REPORT': "The Algorithm Report Is Being Prepared",
 		'NO_CFG_FILE_PROVIDED': "No Config File Specified Or Config File Does Not Exist",
 
-		'RUNNING_PREDEFINED':'Running Pre-Defined Configuration'
+		'RUNNING_PREDEFINED':'Running Pre-Defined Configuration',
+		'CONFIG_OBJECTS_CREATED': 'Configuration Objects Have Been Created For The Algorithm',
+		'EVOL_ALGO_STARTED':'Evolutionary Algorithm Has Been Started...\n'
+
 				}
 
 
@@ -250,6 +253,9 @@ class EvolSearch:
 		
 		'''
 		
+		self.evol_search_log(1,self.errorCodes["EVOL_ALGO_STARTED"])
+
+
 
 
 		for config in self.listOfConfigurations:
@@ -341,7 +347,7 @@ class EvolSearch:
 		'''
 
 
-		parser = argparse.ArgumentParser(description='Create Configuration File Help')
+		parser = argparse.ArgumentParser(description='Evolutionary Algorithm Help')
 
 		parser.add_argument('-f','--file',  type=str, nargs=1,help='Specify A Config File Name')
 
@@ -357,8 +363,58 @@ class EvolSearch:
 
 
 				# Reading the file
+				fhandle=open((args.file)[0])
 
-				# TODO 
+				fileLines=fhandle.readlines()
+
+				fhandle.close()
+
+
+				for line in fileLines:
+
+					line=line.strip().split(',')
+
+
+					# Setting the parameters to be passed to the config object
+					
+
+					# Since some paramters are represented by '-' in the config.cfg,
+					# we have to skip these parameters and let the config class decide
+					# the value.
+
+
+					configParams=['problemSize','popSize','combProb','mutProb',
+									'selectAlgo','recombineAlgo','bitFlappingAlgo',
+									'fitnessFunction','maxGenEvol']
+
+
+					# Zipping parameter names with their corresponding value
+					# in the config.cfg line
+					paramTuple=tuple(zip(configParams,line))
+
+
+
+					# Eliminating those parameters that their value has been set to
+					# '-'
+
+					# Create a lambda function converter that checks whthere we have to use float()
+					# or not. The main reason is the numeric values in config.cfg is string
+					# and cannot be used to create a config object.
+					lambConv=lambda num: num if not num.isnumeric() else ( int(num) if (num.isnumeric() and float(num).is_integer()) else float(num) )
+
+
+					paramDict = dict((x, lambConv(y)) for x, y in paramTuple if  y!='-')
+
+			
+
+					self.listOfConfigurations.append(EvolSearchConfig(**paramDict))
+
+
+
+				self.evol_search_log(1,self.errorCodes['CONFIG_OBJECTS_CREATED'])
+
+
+
 
 
 		
@@ -389,4 +445,8 @@ evolObj.evol_algo_argument_reader()
 
 evolObj.start_evol()
 
+# tup = (("11", 4),)
+# print(tup)
 
+# dct = dict((y, x) for x, y in tup)
+# print(dct)
