@@ -4,7 +4,6 @@ import re
 import argparse
 from os import path
 from ast import literal_eval
-# from ast import eval
 from itertools import product
 
 
@@ -34,7 +33,7 @@ class CrCfg:
 
 
 		# Dictionary of error codes for the program
-		self.errorCode={
+		self.errorCodes={
 		'NO_VAL_FILE_PROVIDED':'.val File Has Not Been Provided Or Found',
 		'RULE_MULTI_DEFINITION': 'Multiple Definition Of Rule Has Been Detected On Line ',
 		'RULE_NOT_CLEAR': 'Rule Has Not Been Defined Yet On Line ',
@@ -86,7 +85,7 @@ class CrCfg:
 
 		parser = argparse.ArgumentParser(description='Create Configuration File Help')
 
-		parser.add_argument('-f','--file',  type=str, nargs=1,help='Specify A File Name')
+		parser.add_argument('-f','--file',  type=str, nargs=1,help='Specify A Value File Name')
 
 
 		args = parser.parse_args()
@@ -97,7 +96,7 @@ class CrCfg:
 				self.valFile=args.file[0]
 		
 		if self.valFile is None:
-			self.crcfg_logging(0,self.errorCode['NO_VAL_FILE_PROVIDED'])
+			self.crcfg_logging(0,self.errorCodes['NO_VAL_FILE_PROVIDED'])
 
 			exit(1)
 
@@ -110,7 +109,7 @@ class CrCfg:
 
 
 		if path.exists("config.cfg"):
-			self.crcfg_logging(1,self.errorCode['CONFIG_FILE_EXISTS'])
+			self.crcfg_logging(1,self.errorCodes['CONFIG_FILE_EXISTS'])
 
 			userAnswer=str()
 
@@ -118,7 +117,7 @@ class CrCfg:
 				userAnswer=input("Overwrite?[y/n] ")
 				if userAnswer.lower() in 'no n':
 
-					self.crcfg_logging(1,self.errorCode['NO_CONFIG_CREATED'])
+					self.crcfg_logging(1,self.errorCodes['NO_CONFIG_CREATED'])
 
 					exit(0)
 				elif userAnswer.lower() in 'y ye yes':
@@ -136,7 +135,7 @@ class CrCfg:
 
 		fhandle.close()
 
-		self.crcfg_logging(1,self.errorCode['CONFIG_FILE_CREATED'])
+		self.crcfg_logging(1,self.errorCodes['CONFIG_FILE_CREATED'])
 
 
 
@@ -182,7 +181,7 @@ class CrCfg:
 					else:
 						# Multiple definition of this rule
 
-						self.crcfg_logging(0,self.errorCode['RULE_MULTI_DEFINITION']+str(i+1))
+						self.crcfg_logging(0,self.errorCodes['RULE_MULTI_DEFINITION']+str(i+1))
 						exit(1)
 
 
@@ -201,7 +200,7 @@ class CrCfg:
 					else:
 						# Multiple definition of this rule
 
-						self.crcfg_logging(0,self.errorCode['RULE_MULTI_DEFINITION']+str(i+1))
+						self.crcfg_logging(0,self.errorCodes['RULE_MULTI_DEFINITION']+str(i+1))
 						exit(1)
 
 				
@@ -222,7 +221,7 @@ class CrCfg:
 					else:
 						# Multiple definition of this rule
 
-						self.crcfg_logging(0,self.errorCode['RULE_MULTI_DEFINITION']+str(i+1))
+						self.crcfg_logging(0,self.errorCodes['RULE_MULTI_DEFINITION']+str(i+1))
 						exit(1)
 
 
@@ -241,7 +240,7 @@ class CrCfg:
 					else:
 						# Multiple definition of this rule
 
-						self.crcfg_logging(0,self.errorCode['RULE_MULTI_DEFINITION']+str(i+1))
+						self.crcfg_logging(0,self.errorCodes['RULE_MULTI_DEFINITION']+str(i+1))
 						exit(1)
 
 
@@ -284,7 +283,7 @@ class CrCfg:
 					else:
 						# Multiple definition of this rule
 
-						self.crcfg_logging(0,self.errorCode['RULE_MULTI_DEFINITION']+str(i+1))
+						self.crcfg_logging(0,self.errorCodes['RULE_MULTI_DEFINITION']+str(i+1))
 						exit(1)
 
 				
@@ -303,7 +302,7 @@ class CrCfg:
 					else:
 						# Multiple definition of this rule
 
-						self.crcfg_logging(0,self.errorCode['RULE_MULTI_DEFINITION']+str(i+1))
+						self.crcfg_logging(0,self.errorCodes['RULE_MULTI_DEFINITION']+str(i+1))
 						exit(1)
 
 				
@@ -327,7 +326,7 @@ class CrCfg:
 					else:
 						# Multiple definition of this rule
 
-						self.crcfg_logging(0,self.errorCode['RULE_MULTI_DEFINITION']+str(i+1))
+						self.crcfg_logging(0,self.errorCodes['RULE_MULTI_DEFINITION']+str(i+1))
 						exit(1)
 
 				
@@ -350,7 +349,7 @@ class CrCfg:
 					else:
 						# Multiple definition of this rule
 
-						self.crcfg_logging(0,self.errorCode['RULE_MULTI_DEFINITION']+str(i+1))
+						self.crcfg_logging(0,self.errorCodes['RULE_MULTI_DEFINITION']+str(i+1))
 						exit(1)
 
 						

@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3.8
 
 
 
@@ -19,7 +19,9 @@ from random import sample
 from random import shuffle
 from itertools import combinations
 from random import choices
+import argparse
 
+from os import path
 
 
 from config import EvolSearchConfig
@@ -40,10 +42,10 @@ class EvolSearch:
 
 	'''
 
-	def __init__ (self,evolConfig=None):
+	def __init__ (self):
 		
 		# Evolutionary search config file
-		self.evolConfig=evolConfig
+		# self.evolConfig=None
 		
 		# Fitness function to be used
 		self.fitnessFunction=None
@@ -61,6 +63,12 @@ class EvolSearch:
 		self.bitFlappingFunction=None
 
 
+		# Config file path
+		self.cfgFile=None
+
+		# Holds the configuration objects to be executed
+		self.listOfConfigurations=list()
+
 
 		# error codes dictionary
 		self.errorCodes={
@@ -71,8 +79,11 @@ class EvolSearch:
 		'NO_BIT_FLAPPING_FUNCTION_FOUND':"Bit Flapping Function Not Defined Yet",
 		'EVOLUTION_MAX_LEVEL_REACHED': "Evoltion Maximum Level Reached",
 		'BEST_SOLUTION_FOUND':"Best Solution Has Been Found",
-		'PREPARING_REPORT': "The Algorithm Report Is Being Prepared"
-		}
+		'PREPARING_REPORT': "The Algorithm Report Is Being Prepared",
+		'NO_CFG_FILE_PROVIDED': "No Config File Specified Or Config File Does Not Exist",
+
+		'RUNNING_PREDEFINED':'Running Pre-Defined Configuration'
+				}
 
 
 		# number of generation evolved
@@ -101,59 +112,59 @@ class EvolSearch:
 
 
 
-	def parse_evol_config(self):
+	def parse_evol_config(self,config):
 		'''
 			This function checks for the config file.
 		'''
 
-		if self.evolConfig is None:
-			self.evol_search_log(0,self.errorCodes['NO_CONFIG_FOUND'])
+		# if self.evolConfig is None:
+		# 	self.evol_search_log(0,self.errorCodes['NO_CONFIG_FOUND'])
 
-			#TODO can we dynamically create this in evaluate_generation function?
-		else:
-			self.fitnessFunction=FitnessFunction(self.evolConfig.fitnessFunc).getFitnessFunc()
+		# 	#TODO can we dynamically create this in evaluate_generation function?
+		# else:
+		self.fitnessFunction=FitnessFunction(config.fitnessFunc).getFitnessFunc()
 			
 
-			# check whether the fitness function was returned or not
-			if self.fitnessFunction is None:
-				self.evol_search_log(0,self.errorCodes['NO_FITNESS_FUNCTION_FOUND'])
+		# 	# check whether the fitness function was returned or not
+		# 	if self.fitnessFunction is None:
+		# 		self.evol_search_log(0,self.errorCodes['NO_FITNESS_FUNCTION_FOUND'])
 				
-				exit(1)
+		# 		exit(1)
 
 
-			self.selectionFunction=SelectionFunction(self.evolConfig.selectAlgo).get_selection_func()
+		self.selectionFunction=SelectionFunction(config.selectAlgo).get_selection_func()
 
 
-			# check whether the selection function was returned or not
-			if self.selectionFunction is None:
-				self.evol_search_log(0,self.errorCodes['NO_SELECTION_FUNCTION_FOUND'])
+			# # check whether the selection function was returned or not
+			# if self.selectionFunction is None:
+			# 	self.evol_search_log(0,self.errorCodes['NO_SELECTION_FUNCTION_FOUND'])
 				
-				exit(1)
+			# 	exit(1)
 
 
-			self.recombinationFunction=RecombinationFunction(self.evolConfig.recombineAlgo).get_recomb_func()
+		self.recombinationFunction=RecombinationFunction(config.recombineAlgo).get_recomb_func()
 
 
-			# check whether the recombination function was returned or not
-			if self.recombinationFunction is None:
-				self.evol_search_log(0,self.errorCodes['NO_RECOMBINATION_FUNCTION_FOUND'])
+			# # check whether the recombination function was returned or not
+			# if self.recombinationFunction is None:
+			# 	self.evol_search_log(0,self.errorCodes['NO_RECOMBINATION_FUNCTION_FOUND'])
 				
-				exit(1)
+			# 	exit(1)
 
 
 
-			self.bitFlappingFunction=BitFlappingFunction(self.evolConfig.bitFlappingAlgo).get_bitflap_func()
+		self.bitFlappingFunction=BitFlappingFunction(config.bitFlappingAlgo).get_bitflap_func()
 
-			# check whether the bit flapping function was returned or not
-			if self.bitFlappingFunction is None:
-				self.evol_search_log(0,self.errorCodes['NO_BIT_FLAPPING_FUNCTION_FOUND'])
+			# # check whether the bit flapping function was returned or not
+			# if self.bitFlappingFunction is None:
+			# 	self.evol_search_log(0,self.errorCodes['NO_BIT_FLAPPING_FUNCTION_FOUND'])
 				
-				exit(1)
+			# 	exit(1)
 
 
 
 
-	def generate_init_pop(self):
+	def generate_init_pop(self,config):
 		'''
 			This function generates the inital population.
 
@@ -166,10 +177,9 @@ class EvolSearch:
 		populationList=[]
 
 
-		for i in range(self.evolConfig.popSize):
-			# populationList.append(sample(range(0,2),self.evolConfig.problemSize))
+		for i in range(config.popSize):
 
-			populationList.append(choices([0,1],weights=[1,1],k=self.evolConfig.problemSize))
+			populationList.append(choices([0,1],weights=[1,1],k=config.problemSize))
 
 
 		return populationList
@@ -201,7 +211,7 @@ class EvolSearch:
 
 
 
-	def shouldBTerminated(self,maxGenEvol,generation):
+	def should_b_terminated(self,maxGenEvol,generation,config):
 
 
 		'''
@@ -212,7 +222,7 @@ class EvolSearch:
 
 		# Check the maxEvolCnt in the config object. 
 
-		if self.evolConfig.maxGenEvol==maxGenEvol:
+		if config.maxGenEvol==maxGenEvol:
 			self.evol_search_log(1,self.errorCodes["EVOLUTION_MAX_LEVEL_REACHED"])
 			return 1
 
@@ -222,7 +232,7 @@ class EvolSearch:
 
 		# Remind that member in this loop, is a tuple of (member,fitnessValue)
 		for member in generation:
-			if member[0]==[1]*(self.evolConfig.problemSize):
+			if member[0]==[1]*(config.problemSize):
 				self.evol_search_log(1,self.errorCodes["BEST_SOLUTION_FOUND"])
 
 				self.evol_search_log(1,self.errorCodes["PREPARING_REPORT"])
@@ -240,80 +250,123 @@ class EvolSearch:
 		
 		'''
 		
-		# check the config file first.
-		self.parse_evol_config()
+
+
+		for config in self.listOfConfigurations:
+
+
+
+
+			
+			#TODO 
+			# check the config file first.
+			self.parse_evol_config(config)
+
+
 
 		
-		# generate the initial population for the first generation
-		initPopulation = self.generate_init_pop()
+			# generate the initial population for the first generation
+			initPopulation = self.generate_init_pop(config)
 
 
-		# evaluate the the initial population
-		currGeneration=self.evaluate_generation(initPopulation)
-
-
-
-
-		# defines the number of loop execution
-		maxGenEvol=0
-
-	
-
-		while not self.shouldBTerminated(maxGenEvol,currGeneration):
-
-
-
-			
-
-			# Selecting parents from the current generation
-			parentsPool=self.selectionFunction(currGeneration)
-
-
-			# Shuffling the parentsPool
-			shuffle(parentsPool)
-
-
-
-			#TODO do we need further probability to select pairs?
-
-
-			# Selecting elements of the parentsPool 2 by 2.
-			parentPairs=[(parentsPool[0],parentsPool[1]) for i in range(0,len(parentsPool),2) ]
+			# evaluate the the initial population
+			currGeneration=self.evaluate_generation(initPopulation)
 
 
 
 
-			# Performing recombination on the parent pairs
-			parentsNotMated,offSprings=self.recombinationFunction(parentPairs,self.evolConfig.problemSize,self.evolConfig.combProb)
+			# defines the number of loop execution
+			maxGenEvol=0
+
+		
+
+			while not self.should_b_terminated(maxGenEvol,currGeneration,config):
 
 
 
-			# Performing bit flapping on the childs
-			self.bitFlappingFunction(offSprings,self.evolConfig.problemSize,self.evolConfig.mutProb)
-
-			
-
-			# Evaluating the offSprings
-			evaluatedOffspring=self.evaluate_generation(offSprings)
-
-
-
-
-			# Mixing the offsprings with parents that were'nt mated in this step as
-			# the current generation
-			
-			currGeneration=[*parentsNotMated,*evaluatedOffspring]
 				
 
-			# decrement the maxGenEvol 
-			maxGenEvol+=1
+				# Selecting parents from the current generation
+				parentsPool=self.selectionFunction(currGeneration)
 
 
-		# print(currGeneration)	
+				# Shuffling the parentsPool
+				shuffle(parentsPool)
 
+
+
+				#TODO do we need further probability to select pairs?
+
+
+				# Selecting elements of the parentsPool 2 by 2.
+				parentPairs=[(parentsPool[0],parentsPool[1]) for i in range(0,len(parentsPool),2) ]
+
+
+
+
+				# Performing recombination on the parent pairs
+				parentsNotMated,offSprings=self.recombinationFunction(parentPairs,config.problemSize,config.combProb)
+
+
+
+				# Performing bit flapping on the childs
+				self.bitFlappingFunction(offSprings,config.problemSize,config.mutProb)
+
+				
+
+				# Evaluating the offSprings
+				evaluatedOffspring=self.evaluate_generation(offSprings)
+
+
+
+
+				# Mixing the offsprings with parents that were'nt mated in this step as
+				# the current generation
+				
+				currGeneration=[*parentsNotMated,*evaluatedOffspring]
+					
+
+				# decrement the maxGenEvol 
+				maxGenEvol+=1
+
+
+			# print(currGeneration)	
+
+
+
+	def evol_algo_argument_reader(self):
+
+		'''
+			This function implements the command line argument reader
+		'''
+
+
+		parser = argparse.ArgumentParser(description='Create Configuration File Help')
+
+		parser.add_argument('-f','--file',  type=str, nargs=1,help='Specify A Config File Name')
+
+
+		args = parser.parse_args()
+
+
+		self.listOfConfigurations=[]
+
+		if args.file:
+			if (args.file)[0].endswith("config.cfg") and path.exists(args.file[0]):
+				self.cfgFile=args.file[0]
+
+
+				# Reading the file
+
+				# TODO 
 
 
 		
+		if self.cfgFile is None:
+			self.evol_search_log(1,self.errorCodes['NO_CFG_FILE_PROVIDED'])
+			self.evol_search_log(1,self.errorCodes['RUNNING_PREDEFINED'])
+
+			self.listOfConfigurations.append(EvolSearchConfig(popSize=100,problemSize=20))
 
 
 
@@ -323,11 +376,16 @@ class EvolSearch:
 
 # evolConfig=EvolSearchConfig(popSize=10,selectAlgo='fitprop',problemSize=4,recombineAlgo='uc',fitnessFunction="trap",bitFlappingAlgo="bfp")
 
-evolConfig=EvolSearchConfig(popSize=100,problemSize=20)
+# evolConfig=EvolSearchConfig(popSize=100,problemSize=20)
 
 
 
-evolObj=EvolSearch(evolConfig)
+
+evolObj=EvolSearch()
+
+
+evolObj.evol_algo_argument_reader()
+
 
 evolObj.start_evol()
 
