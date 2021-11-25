@@ -1,5 +1,5 @@
 from random import randint
-from random import random
+from random import uniform
 
 class RecombinationFunction:
 
@@ -53,7 +53,7 @@ class RecombinationFunction:
 
 
 			# I have used round(), since it would make the randomness much possible.
-			if round(random(),1) == recombProb:
+			if round(uniform(0,1),1) == recombProb:
 
 
 				# Excluding  parent members from the pairs which each pair is with 
@@ -125,7 +125,7 @@ class RecombinationFunction:
 
 
 			# I have used round(), since it would make the randomness much possible.
-			if round(random(),1) == recombProb:
+			if round(uniform(0,1),1) == recombProb:
 
 
 				# Excluding  parent members from the pairs which each pair is with 

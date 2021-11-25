@@ -51,7 +51,7 @@ class FitnessFunction:
 
 			# This can improve the performace since it does not calculate the fitness
 			# for parents that have not maded. Mated parents are in the form of tuple.
-			if type(member)==type([]):
+			if type(member)==type([]):			
 				newGeneration.append((member,sum(member)))
 			else:
 				newGeneration.append(member)  # tuples are added without any calculation
@@ -67,7 +67,18 @@ class FitnessFunction:
 
 		newGeneration=[]
 		for member in generation:
-			newGeneration.append((member,prod(member)))
+
+
+			# We encounter list, when we are going to whether evaluate the
+			# initial population or the next generation children.
+
+			# This can improve the performace since it does not calculate the fitness
+			# for parents that have not maded. Mated parents are in the form of tuple.
+			if type(member)==type([]):			
+				newGeneration.append((member,prod(member)))
+			else:
+				newGeneration.append(member)  # tuples are added without any calculation
+							
 
 
 		return newGeneration
@@ -86,12 +97,26 @@ class FitnessFunction:
 		minNegVal=0
 
 		for member in generation:
+
 			fitnessVal=3*len(member)*prod(member)-sum(member)
 			if fitnessVal < 0:
 				encNegVal=1
 				if fitnessVal < minNegVal:
 					minNegVal=fitnessVal
-			newGeneration.append((member,fitnessVal))
+
+
+			# We encounter list, when we are going to whether evaluate the
+			# initial population or the next generation children.
+
+			# This can improve the performace since it does not calculate the fitness
+			# for parents that have not maded. Mated parents are in the form of tuple.
+
+			if type(member)==type([]):			
+				newGeneration.append((member,fitnessVal))
+			else:
+				newGeneration.append(member)  # tuples are added without any calculation
+							
+
 		
 
 		# since it is possible that the fitness value can be negative in 

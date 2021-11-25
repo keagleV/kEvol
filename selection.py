@@ -44,6 +44,9 @@ class SelectionFunction:
 		# First calculate the total fitness.
 		totalFiteness=sum(member[1] for member in generation)
 
+		if totalFiteness ==0:
+			totalFiteness=1
+
 
 
 
@@ -64,7 +67,6 @@ class SelectionFunction:
 	def bin_tournament(self,generation):
 		'''
 			This function implements the binary tournament selection function.
-
 		'''
 
 		# New Generation to be returned

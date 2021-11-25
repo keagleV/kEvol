@@ -111,6 +111,12 @@ class EvolAlgoConfigReport:
 		# Standard deviation of the fitnesses of the configuration
 		self.standDev=int()
 
+		# Mean value of the fitness function execution for each configuration
+		self.meanValueFF=int()
+
+		# Standard deviation of the fitnesses function calls
+		self.standDevFF=int()
+
 		# This holds the fitness values of all the execution of this configuration.
 		# It is used for optimization for calculating the standard deviation. Since
 		# we have listed the fitnesses in mean calculation, we can prevenet to 
@@ -159,7 +165,7 @@ class EvolAlgoConfigReport:
 			self.bestExecutionFitness = execReport.bestFitness 
 			
 			# Updating the index of the best fitness value's execution
-			self.bestExecutionIndex=self.numOfExecution + 1  # +1 is because the indexes are 0-based
+			self.bestExecutionIndex=self.numOfExecution   # +1 is because the indexes are 0-based
 	
 	
 	def set_config_index(self,index):
@@ -170,23 +176,32 @@ class EvolAlgoConfigReport:
 		self.configIndex=index
 
 
+
+
+	def calculate_statistic_values(self):
+		'''
+			This function calculates the statistical values
+		'''
+		listOfFitnesses=[execObj.bestFitness for execObj in self.execReports]
+		
+		
+		self.meanValue=mean(listOfFitnesses)
+
+
+		self.standDev=pstdev(listOfFitnesses)
+
+
+		# Statistical values for the fitness function call count
+
+		listOfFFCalls=[execObj.fitnessFuncCount for execObj in self.execReports]
+
+
+
+		self.meanValueFF=mean(listOfFFCalls)
+
+
+		self.standDevFF=pstdev(listOfFFCalls)
 	
-	def calculate_mean(self):
-		'''
-			This function calculates the mean value of the fitnesses
-		'''
-		self.listOfFitnesses=[execObj.bestFitness for execObj in self.execReports]
-		
-		
-		self.meanValue=mean(self.listOfFitnesses)
-
-
-	def calculate_sd(self):
-		'''
-			This function calculates the standard deviation of the fitnesses
-		'''
-
-		self.standDev=pstdev(self.listOfFitnesses)
 
 
 	def get_exec_reports(self):
