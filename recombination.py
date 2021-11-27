@@ -51,9 +51,7 @@ class RecombinationFunction:
 			# For each pair, based on the recombintion probabilty, we decide
 			# whether to recombine or not.
 
-
-			# I have used round(), since it would make the randomness much possible.
-			if round(uniform(0,1),1) == recombProb:
+			if uniform(0,1) <= recombProb:
 
 
 				# Excluding  parent members from the pairs which each pair is with 
@@ -124,8 +122,7 @@ class RecombinationFunction:
 			# whether to recombine or not.
 
 
-			# I have used round(), since it would make the randomness much possible.
-			if round(uniform(0,1),1) == recombProb:
+			if uniform(0,1) <= recombProb:
 
 
 				# Excluding  parent members from the pairs which each pair is with 
