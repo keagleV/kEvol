@@ -6,10 +6,10 @@ class EvolSearchConfig:
 
 	'''
 
-	def __init__(self, problemSize=1 , 
-						popSize =1 ,
-						combProb =1 ,
-						mutProb =1 ,
+	def __init__(self, problemSize=50 , 
+						popSize =200 ,
+						combProb =0.7 ,
+						mutProb =0.3 ,
 						selectAlgo="fitprop",
 						recombineAlgo="spc",
 						bitFlappingAlgo='bfp',

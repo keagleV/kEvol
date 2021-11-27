@@ -53,6 +53,9 @@ class SelectionFunction:
 		# Calculate the fitness proportion for each member of the population
 		fitnessProp=[ member[1]/totalFiteness for member in generation ]
 
+		## 
+		if fitnessProp == [0]*len(generation):
+			fitnessProp=[1]*len(generation)
 
 
 		# In the next step we have to select members of the generation based
