@@ -99,6 +99,7 @@ class FitnessFunction:
 		for member in generation:
 
 			fitnessVal=3*len(member)*prod(member)-sum(member)
+			
 			if fitnessVal < 0:
 				encNegVal=1
 				if fitnessVal < minNegVal:

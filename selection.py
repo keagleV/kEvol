@@ -45,6 +45,11 @@ class SelectionFunction:
 		totalFiteness=sum(member[1] for member in generation)
 
 		if totalFiteness ==0:
+			# Set the total fitness to 1 to avoid zero division. The
+			# value of 1 does not matter anymore, since in this algorithm
+			# we are dividing each fitness value by total fitness. Since, each
+			# fitness value is a non-negative number, if the total fitness is 0, 
+			# we can deduce that each one was 0.
 			totalFiteness=1
 
 
@@ -53,7 +58,9 @@ class SelectionFunction:
 		# Calculate the fitness proportion for each member of the population
 		fitnessProp=[ member[1]/totalFiteness for member in generation ]
 
-		## 
+		## In the case that all the probabilites are zero, we assign 1 to each
+		# so we can use python's choices in the process of selecting. In this case
+		# all the members have same weight to be selected.
 		if fitnessProp == [0]*len(generation):
 			fitnessProp=[1]*len(generation)
 
