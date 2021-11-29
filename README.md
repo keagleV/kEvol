@@ -36,7 +36,7 @@ As stated before, since kEvol is not a single program, there is general structur
 for each stage is qualified, you can continue and start with any stage.
 
 Firts, create a .val file:
- ![alt text](https://drive.google.com/file/d/1iFqgjohlx1dWrQRAP2UzErS2_ixNkEmy/view?usp=sharing)
+ ![image](https://drive.google.com/file/d/1iFqgjohlx1dWrQRAP2UzErS2_ixNkEmy/view?usp=sharing)
 
 
 Then use the mkconfig program to create the configuration file:
