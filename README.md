@@ -5,8 +5,7 @@ kEvol is a multi-program family that has implemented EA algorithms.
 ## Description
 
 
-kEvol is a multi-program family that has been written in Python. You can use this family, whether as a single set of programs or modules imported in other programs. kEvol allows to define all the possible values of the EA algorithm's parameters and create all possible  
-combinations of those parameters known as the configurations. The algorithm will test these configurations, and a report will be generated. A command line-based reporter also allows users to load the EA algorithm report(s) and query different information and plot them.
+kEvol is a multi-program family that has been written in Python. You can use this family, whether as a single set of programs or modules imported in other programs. kEvol allows to define all the possible values of the EA algorithm's parameters and create all possible combinations of those parameters known as the configurations. The algorithm will test these configurations, and a report will be generated. A command line-based reporter also allows users to load the EA algorithm report(s) and query different information and plot them.
 
 
 ## Getting Started
