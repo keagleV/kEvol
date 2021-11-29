@@ -64,8 +64,8 @@ In the case of any ambiguity or software bug or any collaboration, feel free to 
 
 Contributors names and contact info
 
-ex. Kiarash Sedghi 
-ex. kiarash.sedghi99@gmail.com
+NAME: Kiarash Sedghi 
+EMAIL: kiarash.sedghi99@gmail.com
 
 
 
