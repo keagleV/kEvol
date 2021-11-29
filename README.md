@@ -23,7 +23,7 @@ combinations of those parameters known as the configurations. The algorithm will
 
 To install simply
 ```
-   git clone https://github.com/keagleV/AI-RevolutionaryAlgo.git
+   git clone https://github.com/keagleV/kEvol.git
 ```
 Then,
 ```
@@ -32,25 +32,43 @@ Then,
 
 ### Executing program
 
-* How to run the program
-* Step-by-step bullets
+As stated before, since kEvol is not a single program, there is general structure that must be followed. However, if the prerequistis 
+for each stage is qualified, you can continue and start with any stage.
+
+Firts, create a .val file:
+
+
+
+Then use the mkconfig program to create the configuration file:
 ```
-code blocks for commands
+mkconfig -f NAME.val
+```
+
+Now the configuration file is ready to be used by the main program:
+```
+kevol -f config.cfg
+```
+
+Optionally, you can use the reporter program for perform a novel analyzation:
+```
+reporter -f report.csv
 ```
 
 ## Help
 
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
+For any help through using this family, you can use -h or --help command line option to get help about that specific program.
+In the case of any ambiguity or software bug or any collaboration, feel free to send me an email at my email address.
+
 
 ## Authors
 
 Contributors names and contact info
 
-ex. Dominique Pizzie  
-ex. [@DomPizzie](https://twitter.com/dompizzie)
+ex. Kiarash Sedghi 
+ex. kiarash.sedghi99@gmail.com
+
+
+
 
 ## Version History
 
