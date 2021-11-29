@@ -24,7 +24,7 @@ combinations of those parameters known as the configurations. The algorithm will
 To install simply
 ```git clone https://github.com/keagleV/AI-RevolutionaryAlgo.git
    ./install.sh
-
+```
 
 ### Executing program
 
