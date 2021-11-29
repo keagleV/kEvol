@@ -12,11 +12,6 @@ from os import path
 
 import matplotlib.pyplot as plt
 
-from matplotlib.pyplot import show
-from matplotlib.pyplot import plot
-from matplotlib.pyplot import xlabel
-from matplotlib.pyplot import ylabel
-from matplotlib.pyplot import text
 
 class Figure:
 	'''
@@ -264,36 +259,58 @@ class Reporter:
 					# fitness function dataframe
 					ffDF=ffF[1]
 
+					# best solution params
+					bestSol=ffF[2]
+
+					# exit(0)
 
 					xVals=ffDF[xAxis].to_list()
 					yVals=ffDF[yAxis].to_list()
 
-					textstr = 'NSE=%.2f\nRMSE=%.2f\n'%(1, 2)
+
+
+					fig = plt.figure()
+					ax = fig.add_subplot()
+					fig.subplots_adjust(top=0.85)
+
+					textStr=" ".join([str(v) for v in bestSol])
+					print("")
+
+					# Set titles for the figure and the subplot respectively
+					fig.suptitle(textStr, fontsize=14, fontweight='bold')
+
+
+					ax.set_title(ffName)
+					ax.set_xlabel(xAxis)
+					ax.set_ylabel(yAxis)
+
+
+
+					# ax.text(3, 8, 'boxed italics text in data coords', style='italic',
+					#         bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
+
 					
-
-					plt.xlabel(xAxis)
-					plt.ylabel(yAxis)
-					# print textstr
-					plt.text(500, 500, textstr, fontsize=14)
-					plt.grid(True)
-					plt.subplots_adjust(left=0.25)
-
-
-					plt.plot(xVals,yVals)
+					ax.plot(xVals,yVals)
 
 					plt.show()
 
-					#Setting the figure's labels
+
+					# textstr = 'NSE=%.2f\nRMSE=%.2f\n'%(1, 2)
 					
 
-					# # Setting a text
-					# text(0,0,"helll")
+					# plt.xlabel(xAxis)
+					# plt.ylabel(yAxis)
+					# # print textstr
+					# plt.text(500, 500, textstr, fontsize=14)
+					# plt.grid(True)
+					# plt.subplots_adjust(left=0.25)
+					# plt.title(ffName)
 
-					# plot(xVals,yVals)
-					# show()
+					# plt.plot(xVals,yVals)
+
+					# plt.show()
+
 					
-
-				
 				
 
 				# For changing the line to point > '*', color='black'
@@ -479,7 +496,7 @@ class Reporter:
 		filteredByParams=filteredByParams.rename(columns=dict(zip( filteredByParams.columns.to_list(),self.axisVals)))
 		
 
-		self.perFFBestSol.append((fitnessFunction,filteredByParams))
+		self.perFFBestSol.append((fitnessFunction,filteredByParams,bestsolParams))
 
 
 		
