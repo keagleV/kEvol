@@ -5,22 +5,26 @@ kEvol is a multi-program family that has implemented EA algorithms.
 ## Description
 
 
-kEvol is a multi-program family that has been written in Python. You can use this family, whether as a single set of programs or as modules imported in other programs.  kEvol allows to define all the possible values of the EA algorithm's parameters and create all possible different 
-combinations of the parameters that are known as the configurations. There is also a command line-based reporter
-that allows users to load the EA algorithm report(s) and query different information and plot them.
+kEvol is a multi-program family that has been written in Python. You can use this family, whether as a single set of programs or modules imported in other programs. kEvol allows to define all the possible values of the EA algorithm's parameters and create all possible  
+combinations of those parameters known as the configurations. The algorithm will test these configurations, and a report will be generated. A command line-based reporter also allows users to load the EA algorithm report(s) and query different information and plot them.
 
 
 ## Getting Started
 
 ### Dependencies
 
-* Describe any prerequisites, libraries, OS version, etc., needed before installing program.
-* ex. Windows 10
+* OS: Windows/Linux
 
 ### Installing
 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+
+* Currently, the only support is for the \*nix-based systems
+
+
+To install simply
+```git clone https://github.com/keagleV/AI-RevolutionaryAlgo.git
+```./install.sh
+
 
 ### Executing program
 
