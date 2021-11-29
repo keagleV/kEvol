@@ -1,0 +1,497 @@
+#!/usr/bin/python3
+
+
+from pandas import  read_csv 
+from pandas import  concat
+from pandas import DataFrame
+from re import match
+from re import search
+
+import argparse
+from os import path
+
+import matplotlib.pyplot as plt
+
+from matplotlib.pyplot import show
+from matplotlib.pyplot import plot
+from matplotlib.pyplot import xlabel
+from matplotlib.pyplot import ylabel
+from matplotlib.pyplot import text
+
+class Figure:
+	'''
+		This class has implemented the Figures object of the reporter.
+		Each object is going to store a name for the figure and its axises.
+	'''
+	def __init__(self):
+		# Figure name
+		self.figName=str()
+
+		# X-axis
+		self.xaxix=str()
+
+		# Y-axis
+		self.yaxis=str()
+
+
+	def set_fig_name(self,name):
+		'''
+			This function sets the figure name
+		'''
+		self.figName=name
+
+	def get_fig_name(self):
+		'''
+			This function returns the figure name
+		'''
+		return self.figName
+
+
+
+
+	def set_x_axis(self,param):
+		'''
+			This function sets the X-axis of the figure
+
+		'''
+		self.xaxis=param
+
+	def set_y_axis(self,param):
+		'''
+			This function sets the Y-axis of the figure
+
+		'''
+		self.yaxis=param
+
+
+	def get_x_axis(self):
+		'''
+			This function returns the X-axis of the figure
+
+		'''
+		return self.xaxis
+
+	
+	def get_y_axis(self):
+		'''
+			This function returns the Y-axis of the figure
+
+		'''
+		return self.yaxis
+
+
+
+
+
+class Reporter:
+	'''
+		This class has implemented the reporter for the evolutionary
+		algorithm.
+	'''
+
+
+	def __init__(self):
+		
+		# Holds the report files paths
+		self.reportFiles=None
+
+		# Report file handler
+		self.rh=[]
+
+		# Holds the fitness function used for the evolutionary algorithm
+		self.fitnessFunctions=list()
+
+
+		# List of figures
+		self.figList=list()
+
+		# List of possible values for Axises
+		self.axisVals=list()
+
+		# List of per fitness function best solution.
+		# This list has a filtered dataframe for each fitness function, based
+		# on the best soltion
+		self.perFFBestSol=list()
+
+
+		# Possible commands
+		self.commands = {
+		'FIG_DEF': '\s*[a-zA-Z_][a-zA-Z_]*\s*=\s*\(((\s*x\s*=\s*[a-zA-Z_][a-zA-Z_]*\s*,\s*y\s*=\s*[a-zA-Z_][a-zA-Z_]*\s*)|(\s*y\s*=\s*[a-zA-Z_][a-zA-Z_]*\s*,\s*x\s*=\s*[a-zA-Z_][a-zA-Z_]*\s*))\)\s*',
+		'SHOW_FIGS': '\s*show\s*([a-zA-Z_-][a-zA-Z_-]*)?\s*',
+		'FLUSH_FIGS': '\s*flush\s*',
+		'QUIT': '\s*(quit|exit)\s*',
+		'PLOT': '\s*plot\s*([a-zA-Z_-][a-zA-Z_-]*)\s*',
+		'HELP': '\s*help\s*'	
+
+		}
+
+
+		# Reporter error codes
+		self.errorCodes={
+		'NO_REPORT_FILE_PROVIDED': 'No Report File Provided',
+		'FILE_EXT_EXIST': 'Check The Existance And Extension(.csv) Of The Files',
+		'INVALID_CMD': 'Invalid Command Issued',
+		'X_AXIS_NOT_VALID': 'The Value Of The X-Axis Is Not Valid',
+		'Y_AXIS_NOT_VALID': 'The Value Of The Y-Axis Is Not Valid',
+		'AXIS_NOT_DIFF': 'Value Of The Axises Cannot Be The Same',
+		'FIG_UPDATED': 'Figure Does Exist, Value Of The Axises Updated',
+		'FIG_CREATED': 'New Figure Created',
+		'FIG_NOT_FOUND': 'Figure Specified Not Found',
+		'GEN_REPORTS': 'Generating Reports.... '
+
+		}
+
+
+
+	def reporter_logging(self,status,mess):
+
+		'''
+			This function implements the reporter logger.
+		'''
+
+		if status:
+			print("[INF] {0}".format(mess))
+		else:
+			print("[ERR] {0}".format(mess))
+
+
+
+	def argument_reader(self):
+
+		'''
+			This function implements the command line argument reader
+		'''
+
+
+		parser = argparse.ArgumentParser(description='Reporter Help')
+
+		parser.add_argument('-f','--file',  type=str, nargs='*',help='Specify A Report File Name')
+
+
+		args = parser.parse_args()
+
+		if args.file:
+
+			files=args.file
+
+			for file in files:
+				if not ( file.endswith(".csv") and path.exists(file) ):
+					self.reporter_logging(0,self.errorCodes['FILE_EXT_EXIST'])
+					exit(1)
+
+			# All files where ok.
+			self.reportFiles=args.file
+
+
+
+		
+		if self.reportFiles is None:
+			self.reporter_logging(0,self.errorCodes['NO_REPORT_FILE_PROVIDED'])
+
+			exit(1)
+
+
+
+	def init_prompt(self):
+		'''
+			This function prompts a message describing this function.
+		'''
+
+		reportStr='''This program is a reporter for the evolutionary algorithm. \n\n[..] This program is a rudimentay and novel reporter which gives some basic analysis and some basic plottings. \n\n'''
+
+		print(reportStr)
+
+
+	def read_report_file(self):
+		'''
+			This function reads the report file provided in the command line.
+		
+		'''
+
+		for file in self.reportFiles:
+			self.rh.append(read_csv(file))
+
+
+		self.rh = concat(self.rh, ignore_index=True)
+
+		numberOfCFGS=len(self.rh.CFG.to_list())
+
+		# update CFG column with values 1 to numberOfCFGS
+		newCol= DataFrame({'CFG': range(1,numberOfCFGS+1)})
+
+		self.rh.update(newCol)
+
+
+		# Set the possible values for the axises of the figures.
+		# Filtering those columns that do not accept integer values and are 
+		# eligible to be used for plotting.
+
+		self.axisVals=[val.lower() for val in self.rh.columns.to_list()]
+		# self.axisVals = [  "problemsize", "popsize","combprob","mutprob","selectalgo","recombinealgo","bitflappingalgo","fitnessfunction","maxgenevol",
+						# "cfg_mean","cfg_sd","ffc_mean","ffc_sd"]
+
+
+
+
+
+		
+		# Calling generate_report function
+		self.generate_report()
+
+
+		self.reporter_logging(1,self.errorCodes['GEN_REPORTS'])
+
+
+	def plot_fig(self,figName):
+		'''
+			This function plots a figure
+		'''
+
+		for fig in self.figList:
+			if fig.get_fig_name()==figName:
+
+				
+				xAxis=fig.get_x_axis()
+				yAxis=fig.get_y_axis()
+				
+
+
+				for ffF in self.perFFBestSol:
+
+					# fitness function name
+					ffName=ffF[0]
+
+					# fitness function dataframe
+					ffDF=ffF[1]
+
+
+					xVals=ffDF[xAxis].to_list()
+					yVals=ffDF[yAxis].to_list()
+
+					textstr = 'NSE=%.2f\nRMSE=%.2f\n'%(1, 2)
+					
+
+					plt.xlabel(xAxis)
+					plt.ylabel(yAxis)
+					# print textstr
+					plt.text(500, 500, textstr, fontsize=14)
+					plt.grid(True)
+					plt.subplots_adjust(left=0.25)
+
+
+					plt.plot(xVals,yVals)
+
+					plt.show()
+
+					#Setting the figure's labels
+					
+
+					# # Setting a text
+					# text(0,0,"helll")
+
+					# plot(xVals,yVals)
+					# show()
+					
+
+				
+				
+
+				# For changing the line to point > '*', color='black'
+
+
+				return 0
+
+		self.reporter_logging(0,self.errorCodes['FIG_NOT_FOUND'])
+
+
+
+	def cmdi(self):
+		'''
+			This function implements the command-line interface of the
+			reporter.
+		'''
+
+		while True:
+			userCmd=input("R> ")
+
+			if not userCmd.strip():
+				continue
+
+			if match(self.commands['FIG_DEF'],userCmd):
+				figName=search('\s*[a-zA-Z_][a-zA-Z_]*\s*=\s*',userCmd).group(0).split("=")[0].strip()
+				
+				xAxisVal=search('\s*x\s*=\s*[a-zA-Z_][a-zA-Z_]*\s*',userCmd).group(0).split("=")[1].strip().lower()
+
+				yAxisVal=search('\s*y\s*=\s*[a-zA-Z_][a-zA-Z_]*\s*',userCmd).group(0).split("=")[1].strip().lower()
+
+
+
+				# Check the possible values for X-axis and Y-axis
+				if xAxisVal not in self.axisVals:
+					self.reporter_logging(0,self.errorCodes['X_AXIS_NOT_VALID'])
+					continue
+
+				if yAxisVal not in self.axisVals:
+					self.reporter_logging(0,self.errorCodes['Y_AXIS_NOT_VALID'])
+					continue
+
+				if xAxisVal==yAxisVal:
+					self.reporter_logging(0,self.errorCodes['AXIS_NOT_DIFF'])
+					continue
+
+
+				# Check whether the fitName does exist before or not.
+				# If the figure exists, we have to update the axis values, 
+				# otherwise, we create new object for the figure.
+				found=0
+				for obj in self.figList:
+					if obj.get_fig_name()==figName:
+						self.reporter_logging(1,self.errorCodes['FIG_UPDATED'])
+						
+						obj.set_x_axis(xAxisVal)
+						obj.set_y_axis(yAxisVal)
+
+						found=1
+						break
+
+				# The figure name is new
+				if not found:
+					obj=Figure()
+
+					obj.set_x_axis(xAxisVal)
+					obj.set_y_axis(yAxisVal)
+					obj.set_fig_name(figName)
+
+					self.reporter_logging(1,self.errorCodes['FIG_CREATED'])
+
+					# Appending the object to the list of objects
+					self.figList.append(obj)
+
+
+			
+			elif match(self.commands['SHOW_FIGS'],userCmd):
+				
+				if len(self.figList) ==0 :
+					print("No Figure")
+				else:
+
+					figName=search('\s*show\s*([a-zA-Z_-][a-zA-Z_-]*)\s*',userCmd)
+
+					if figName is None:
+							for fig in self.figList:
+								print("  ("+fig.get_fig_name()+") X:"+fig.get_x_axis()+" Y:"+fig.get_y_axis())
+					else:
+						figName=figName.group(0).strip().split()[1]
+						for fig in self.figList:
+							if fig.get_fig_name()==figName:
+								print("  ("+fig.get_fig_name()+") X:"+fig.get_x_axis()+" Y:"+fig.get_y_axis())
+
+
+					
+			elif match(self.commands['FLUSH_FIGS'],userCmd):
+
+				self.figList=[]
+
+				print("Figures Flushed")
+
+			
+			elif match(self.commands['QUIT'],userCmd):
+				print("BYE")
+				exit(1)
+
+			elif match(self.commands['PLOT'],userCmd):
+
+				figName=search('\s*plot\s*([a-zA-Z_-][a-zA-Z_-]*)\s*',userCmd).group(0).split()[1].strip()
+
+				self.plot_fig(figName)
+
+			elif match(self.commands['HELP'],userCmd):
+
+				print("HELP")
+				print("--------------")
+				print("NAME = () ---------- Creating a new figure")
+				print("show [FIG] ---------- Show all the figures or just FIG")
+				print("flush ---------- Deleting all the figures")
+				print("plot FIG ---------- Plotting a figure")
+				print("quit/exit ---------- Exiting the program")
+
+
+			else:
+				self.reporter_logging(0,self.errorCodes['INVALID_CMD'])
+	
+
+
+
+
+
+	def generate_report(self):
+
+		'''
+			This function generates some general reports as well as
+			filtered dataframe per fitness function based on its best solution
+		'''
+
+		# Finding the fitness function used in the configuration
+		fitnessFunctions=self.rh.fitnessFunction.to_list()
+
+		# Unique this list
+		self.fitnessFunctions=list(set(fitnessFunctions))
+
+
+		self.reporter_logging(1,"# Fitness functions: {0}".format(str(len(self.fitnessFunctions))))
+
+		for ff in self.fitnessFunctions:
+			self.create_per_ff_report(ff)
+
+
+
+	def create_per_ff_report(self,fitnessFunction):
+
+		'''
+			This function represents report for each fitness function
+		'''
+		filteredByff = (self.rh[self.rh['fitnessFunction'] == fitnessFunction  ])
+
+		# TODO finding the best config by sorting.
+		# Maximum mean and Minimum standard deviation
+		sortedByMeanSd=filteredByff.sort_values(by=["CFG_MEAN","CFG_SD"], ascending=[False,True])
+
+
+		# Best solution is the first row
+		bestSol=sortedByMeanSd.iloc[0]
+
+
+		# Finding the parameters of the best solution except the fitness function itself
+		#TODO eliminate the ff function
+		bestsolParams= bestSol.loc['popSize':'maxGenEvol']
+
+		#Now filter the 'filteredByff' dataframe with the prameters we have found
+		filteredByParams= filteredByff[ 
+										(filteredByff['popSize']== bestsolParams.popSize) &
+										(filteredByff['combProb']== bestsolParams.combProb) &
+										(filteredByff['mutProb']== bestsolParams.mutProb) &
+										(filteredByff['selectAlgo']== bestsolParams.selectAlgo) &
+										(filteredByff['bitFlappingAlgo']== bestsolParams.bitFlappingAlgo) &
+										(filteredByff['maxGenEvol']== bestsolParams.maxGenEvol) ]
+
+		
+		# Updating column names with names that are lowercase
+		filteredByParams=filteredByParams.rename(columns=dict(zip( filteredByParams.columns.to_list(),self.axisVals)))
+		
+
+		self.perFFBestSol.append((fitnessFunction,filteredByParams))
+
+
+		
+
+
+
+
+
+
+obj=Reporter()
+obj.argument_reader()
+obj.init_prompt()
+obj.read_report_file()
+obj.cmdi()
+obj.present_general_report()

@@ -15,7 +15,6 @@ math
 
 
 
-from random import sample
 from random import shuffle
 from itertools import combinations
 from random import choices
@@ -249,7 +248,7 @@ class EvolSearch:
 
 
 		# Columns of the csv file
-		reportColumns=['CFG','CFG_MEAN','CFG_SD','CFG_BEI','CFG_BEF']
+		reportColumns=['CFG','CFG_MEAN','CFG_SD','FFC_MEAN','FFC_SD','CFG_BEI','CFG_BEF']
 
 		#TODO
 		for i in range(10):
@@ -280,9 +279,10 @@ class EvolSearch:
 			valueToBeWritten=[]
 			valueToBeWritten.append(str(configR.configIndex+1)) # +1 is because indexes are 0-based
 			valueToBeWritten.append(str(configR.meanValue))
-
 			valueToBeWritten.append(str(configR.standDev))
 
+			valueToBeWritten.append(str(configR.meanValueFF))
+			valueToBeWritten.append(str(configR.standDevFF))
 
 			valueToBeWritten.append(str(configR.bestExecutionIndex))
 			valueToBeWritten.append(str(configR.bestExecutionFitness))
@@ -313,7 +313,6 @@ class EvolSearch:
 			# Writing values 
 			fhandle.write(','.join(valueToBeWritten)+"\n")
 
-
 		self.evol_search_log(1,self.errorCodes['REPORT_CREATED'])
 
 		
@@ -332,9 +331,6 @@ class EvolSearch:
 			terminated or not.
 
 		'''
-
-		
-
 
 
 		# Check the maxEvolCnt in the config object. 
@@ -414,8 +410,10 @@ class EvolSearch:
 
 		# For each config we are going to execute the evolution algorithm
 		# for a specific number of rounds.
+		it=0
 		for idx,config in enumerate(self.listOfConfigurations):
-
+			print(">" + str(it))
+			it+=1
 
 			# Create report object for the config
 			configReport=EvolAlgoConfigReport(config)
@@ -441,9 +439,11 @@ class EvolSearch:
 
 
 			# After finishing the 10 rounds of execution, calculate the 
-			# mean and standard deviation value for the configuration
-			configReport.calculate_mean()
-			configReport.calculate_sd()
+			# mean and standard deviation value for the configuration as well
+			# as for fitness function calss
+			configReport.calculate_statistic_values()
+
+
 
 			# Adding the configuration to the list of all config reports.
 			self.configReports.append(configReport)
@@ -485,8 +485,9 @@ class EvolSearch:
 		# defines the number of loop execution
 		maxGenEvol=0
 
-		# defines the fitness function call count
-		fitnessFunctionCallCount=0
+		# defines the fitness function call count. Initial is 1 since
+		# we have called it once before
+		fitnessFunctionCallCount=1
 
 	
 
@@ -550,7 +551,16 @@ class EvolSearch:
 
 
 
+	def is_float(self,num):
+		'''
+			This function checks whether a string is a float or not
+		'''
+		try:
+			float(num)
+			return True
+		except ValueError:
 
+			return False
 
 
 
@@ -573,7 +583,7 @@ class EvolSearch:
 		self.listOfConfigurations=[]
 
 		if args.file:
-			if (args.file)[0].endswith("config.cfg") and path.exists(args.file[0]):
+			if (args.file)[0].endswith(".cfg") and path.exists(args.file[0]):
 				self.cfgFile=args.file[0]
 
 
@@ -588,6 +598,12 @@ class EvolSearch:
 				for line in fileLines:
 
 					line=line.strip().split(',')
+
+					# Go for chaning the numeric values to float
+					# for i,ele in enumerate(line):
+					# 	if self.is_float(ele):
+					# 		line[i]=float(ele)
+
 
 
 					# Setting the parameters to be passed to the config object
@@ -615,12 +631,14 @@ class EvolSearch:
 					# Create a lambda function converter that checks whthere we have to use float()
 					# or not. The main reason is the numeric values in config.cfg is string
 					# and cannot be used to create a config object.
-					lambConv=lambda num: num if not num.isnumeric() else ( int(num) if (num.isnumeric() and float(num).is_integer()) else float(num) )
+
+					lambConv=lambda num: num if ( not num.isnumeric() and not self.is_float(num) ) else  ( float(num) if not num.isnumeric() and self.is_float(num) else ( int(num) if (num.isnumeric() and float(num).is_integer()) else float(num) ))  
 
 
 					paramDict = dict((x, lambConv(y)) for x, y in paramTuple if  y!='-')
 
-			
+					
+					
 
 					self.listOfConfigurations.append(EvolSearchConfig(**paramDict))
 
