@@ -14,6 +14,7 @@ combinations of those parameters known as the configurations. The algorithm will
 ### Dependencies
 
 * OS: Windows/Linux
+* Python3.8 or later
 
 ### Installing
 
