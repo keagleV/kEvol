@@ -27,7 +27,7 @@ To install simply
    $ cd kEvol
    $ echo  PATH=$PATH:$PWD >>  $HOME/.bashrc
    $ cd dist
-   $ pip3 install kEvol-1.0.whl
+   $ pip3 install kEvol-1.0.tar.gz
 ```
 Adding the execuatble files to 
 
