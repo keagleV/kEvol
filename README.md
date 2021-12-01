@@ -38,7 +38,6 @@ for each stage is qualified, you can continue and start with any stage.
 Firts, create a .val file:
 
 
-
 Then use the mkconfig program to create the configuration file:
 ```
 mkconfig -f NAME.val
