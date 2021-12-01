@@ -24,9 +24,12 @@ kEvol is a multi-program family that has been written in Python. You can use thi
 To install simply
 ```
    $ git clone https://github.com/keagleV/kEvol.git
+   $ cd kEvol
+   $ echo  PATH=$PATH:$PWD >>  $HOME/.bashrc
    $ cd dist
    $ pip3 install kEvol-1.0.whl
 ```
+Adding the execuatble files to 
 
 
 ### Executing program
