@@ -36,7 +36,7 @@ class CrCfg:
 		self.errorCodes={
 		'NO_VAL_FILE_PROVIDED':'.val File Has Not Been Provided Or Found',
 		'RULE_MULTI_DEFINITION': 'Multiple Definition Of Rule Has Been Detected On Line ',
-		'RULE_NOT_CLEAR': 'Rule Has Not Been Defined Yet On Line ',
+		'RULE_NOT_CLEAR': 'Rule Syntax Error Or Value Error On Line ',
 		'CONFIG_FILE_EXISTS': 'config.cfg Already Exists, Overwrite It? ',
 		'NO_CONFIG_CREATED': "No Config File Corrupted Or Created",
 		'CONFIG_FILE_CREATED': "Config File config.cfg Has Been Created"
@@ -167,10 +167,11 @@ class CrCfg:
 				if re.match(self.matchingRules['populationSize'][0],line):
 					if self.matchingRules['populationSize'][1]==0: #TODO Bug on the state that we say popSize=[15] odd number
 
-						listVals=re.search('\s*([1-9][0-9]*[02468])(\s*,\s*([1-9][0-9]*[02468]))*\s*',line).group(0)
+						listVals=re.search('\s*\[\s*([1-9][0-9]*[02468])(\s*,\s*([1-9][0-9]*[02468]))*\s*\]\s*',line).group(0)
 
 
 						self.populationSizes=literal_eval(listVals)
+
 
 
 
@@ -245,13 +246,14 @@ class CrCfg:
 				elif re.match(self.matchingRules['selectionAlgo'][0],line):
 					if self.matchingRules['selectionAlgo'][1]==0: #TODO Bug on the state that we say popSize=[15] odd number
 
-						listVals=re.search('\s*(fitprop|bintour)(\s*,\s*(fitprop|bintour))*\s*',line).group(0)
+						listVals=re.search('\s*\[\s*(fitprop|bintour)(\s*,\s*(fitprop|bintour))*\s*\]\s*',line).group(0)
 
 						listVals=re.sub(r'([a-zA-Z]+)',r'"\1"',listVals)
 
 						self.selAlgos=literal_eval(listVals)
 
 
+					
 						# Set its definition to 1
 						self.matchingRules['selectionAlgo'][1]=1
 					else:
@@ -264,14 +266,13 @@ class CrCfg:
 				elif re.match(self.matchingRules['recombAlgo'][0],line):
 					if self.matchingRules['recombAlgo'][1]==0: #TODO Bug on the state that we say popSize=[15] odd number
 
-						listVals=re.search('\s*(spc|uc)(\s*,\s*(spc|uc))*\s*',line).group(0)
+						listVals=re.search('\s*\[\s*(spc|uc)(\s*,\s*(spc|uc))*\s*\]\s*',line).group(0)
 
 
 						listVals=re.sub(r'([a-zA-Z]+)',r'"\1"',listVals)
 
 
 						self.recombAlgos=literal_eval(listVals)
-
 
 						# Set its definition to 1
 						self.matchingRules['recombAlgo'][1]=1

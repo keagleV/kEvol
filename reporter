@@ -285,32 +285,15 @@ class Reporter:
 					ax.set_ylabel(yAxis)
 
 
+					print(xVals,yVals)
+					if len(yVals)==1:
+						ax.plot(xVals,yVals,'*', color='black')
+					else:
+						ax.plot(xVals,yVals)
 
-					# ax.text(3, 8, 'boxed italics text in data coords', style='italic',
-					#         bbox={'facecolor': 'red', 'alpha': 0.5, 'pad': 10})
-
-					
-					ax.plot(xVals,yVals)
 
 					plt.show()
 
-
-					# textstr = 'NSE=%.2f\nRMSE=%.2f\n'%(1, 2)
-					
-
-					# plt.xlabel(xAxis)
-					# plt.ylabel(yAxis)
-					# # print textstr
-					# plt.text(500, 500, textstr, fontsize=14)
-					# plt.grid(True)
-					# plt.subplots_adjust(left=0.25)
-					# plt.title(ffName)
-
-					# plt.plot(xVals,yVals)
-
-					# plt.show()
-
-					
 				
 
 				# For changing the line to point > '*', color='black'

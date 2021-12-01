@@ -1,26 +1,11 @@
 #!/usr/bin/python3.8
 
 
-
-'''
-> range 1,100 to population
-goftan random
-math
-
->> sample estefade nashod bejash choices estefade kardam
-'''
-
-
-
-
-
-
 from random import shuffle
 from itertools import combinations
 from random import choices
-import argparse
-
 from os import path
+import argparse
 
 
 from config import EvolSearchConfig

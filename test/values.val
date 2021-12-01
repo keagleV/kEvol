@@ -1,22 +1,62 @@
-# This file specifies the possible values
-# for the EA algortihm.
+###	<File Description> Sample .val file for the kEvol	
+###    
+### <Author> Kiarash Sedghi
+###      
 
 
-
+## popSize can only hold even values
 popSize=[50,100,200,300]
 
+
+## probSize can hold any non-zero value
 probSize=[10,30,50,100]
 
-recombProb=[0.5 , 0.7 ,0.9 ,1]
 
-mutProb=[0.1 , 0.3,0.4]
+## recombProb can hold any value between 0 and 1 inclusive
+recombProb=[0.5 , 0.7 ,1.9998 ,1]
+
+
+## mutProb can hold any value between 0 and 1 inclusive
+mutProb=[ 0.1231 , 0.3, 0.4 ]
+
+
+## Possible selection algorithms are:
+# 1) fitprop
+# 2) bintour
+# any other algorithm will lead to syntax/value error.
 
 selAlgo=[fitprop,bintour]
 
+
+
+
+## Possible combination algorithms are:
+# 1) spc (Single-point crossover)
+# 2) uc (Uniform crossover)
+# any other algorithm will lead to syntax/value error.
+
 recombAlgo=[spc,uc]
 
+
+
+# Maximum generations to be progressed in the algorithm.
+# This can hold any non-zero value.
 maxGenEvol=[300]
+
+
+## Possible fitness algorithms are:
+# 1) onemax
+# 2) peak
+# 3) trap
+# any other algorithm will lead to syntax/value error.
 
 fitnessAlgo=[onemax,trap,peak]
 
+
+## Possible bit-flapping algorithms are:
+# 1) bfp (bit-flapping algorithm)
+# any other algorithm will lead to syntax/value error.
+
 bitFlapAlgo=[bfp]
+
+
