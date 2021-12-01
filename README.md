@@ -19,6 +19,7 @@ kEvol is a multi-program family that has been written in Python. You can use thi
 
 
 * Currently, the only support is for the \*nix-based systems
+* Currently, the only support is for the execuatble files not library files
 
 
 To install simply
