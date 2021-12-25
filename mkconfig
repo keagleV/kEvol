@@ -173,8 +173,6 @@ class CrCfg:
 						self.populationSizes=literal_eval(listVals)
 
 
-
-
 						# Set its definition to 1
 						self.matchingRules['populationSize'][1]=1
 					else:
@@ -191,8 +189,6 @@ class CrCfg:
 
 						
 						self.problemSizes=literal_eval(listVals)
-
-
 
 						# Set its definition to 1
 						self.matchingRules['problemSize'][1]=1
@@ -211,8 +207,6 @@ class CrCfg:
 
 						
 						self.recombProbs=literal_eval(listVals)
-
-
 
 
 						# Set its definition to 1
@@ -253,7 +247,6 @@ class CrCfg:
 						self.selAlgos=literal_eval(listVals)
 
 
-					
 						# Set its definition to 1
 						self.matchingRules['selectionAlgo'][1]=1
 					else:
@@ -310,7 +303,6 @@ class CrCfg:
 
 
 						self.fitnessFuncs=literal_eval(listVals)
-
 						
 
 						# Set its definition to 1
@@ -331,7 +323,6 @@ class CrCfg:
 
 
 						self.bitFlapAlgos=literal_eval(listVals)
-
 
 
 						# Set its definition to 1
@@ -401,5 +392,6 @@ crcfObj=CrCfg()
 crcfObj.argument_reader()
 
 crcfObj.parse_val_file()
+
 
 

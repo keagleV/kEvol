@@ -4,20 +4,16 @@
 ###      
 
 
-## popSize can only hold even values
-popSize=[50,100,200,300]
-
-
 ## probSize can hold any non-zero value
-probSize=[10,30,50,100]
+probSize=[ 10 ,30 ,50,100]
 
 
 ## recombProb can hold any value between 0 and 1 inclusive
-recombProb=[0.5 , 0.7 ,1.9998 ,1]
+recombProb=[0.5 , 0.7 , 0.9 ,1]
 
 
 ## mutProb can hold any value between 0 and 1 inclusive
-mutProb=[ 0.1231 , 0.3, 0.4 ]
+mutProb=[ 0.1, 0.3, 0.5, 0.033 , 0.02 , 0.01 ]
 
 
 ## Possible selection algorithms are:
@@ -58,5 +54,6 @@ fitnessAlgo=[onemax,trap,peak]
 # any other algorithm will lead to syntax/value error.
 
 bitFlapAlgo=[bfp]
+
 
 

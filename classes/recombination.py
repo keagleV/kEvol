@@ -64,8 +64,6 @@ class RecombinationFunction:
 				crossOverPoint=randint(1,solutionSize-1)
 
 				
-
-
 				# Creating new childs out of the parents and appeding them to
 				# the newGeneration. 
 
@@ -83,19 +81,13 @@ class RecombinationFunction:
 				# add them without chaning to the newGeneration.
 
 
-				#TODO
 				# Important Node: Adding the parents would be done as a tuple of
 				# (member,fitness) since it makes the evaluation of the new generation
-				# much more efficient because there if no necc ??????????????
+				# much more efficient
 
 
 				parentsNotMated.append(pair[0])
 				parentsNotMated.append(pair[1])
-
-
-
-				
-
 
 
 		# returning newGeneration which is our new generation of childs
@@ -164,18 +156,13 @@ class RecombinationFunction:
 				# add them without chaning to the newGeneration.
 
 
-				#TODO
 				# Important Node: Adding the parents would be done as a tuple of
 				# (member,fitness) since it makes the evaluation of the new generation
-				# much more efficient because there if no necc ??????????????
-
+				# much more efficient
 
 				parentsNotMated.append(pair[0])
 				parentsNotMated.append(pair[1])
 
-
-
-				
 
 
 

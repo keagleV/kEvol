@@ -40,7 +40,6 @@ class FitnessFunction:
 
 	def oneMax(self,generation):
 
-		#TODO  eliminate the both cases of 
 
 		newGeneration=[]
 		for member in generation:

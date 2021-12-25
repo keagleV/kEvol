@@ -222,12 +222,7 @@ class Reporter:
 		# eligible to be used for plotting.
 
 		self.axisVals=[val.lower() for val in self.rh.columns.to_list()]
-		# self.axisVals = [  "problemsize", "popsize","combprob","mutprob","selectalgo","recombinealgo","bitflappingalgo","fitnessfunction","maxgenevol",
-						# "cfg_mean","cfg_sd","ffc_mean","ffc_sd"]
-
-
-
-
+		
 
 		
 		# Calling generate_report function

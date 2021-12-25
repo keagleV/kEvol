@@ -196,7 +196,6 @@ class EvolAlgoConfigReport:
 		listOfFFCalls=[execObj.fitnessFuncCount for execObj in self.execReports]
 
 
-
 		self.meanValueFF=mean(listOfFFCalls)
 
 
